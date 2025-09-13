@@ -11,6 +11,14 @@ public class GameManager : MonoBehaviour
         I = this;
     }
 
+
+    void Start()
+    {
+        StartRun();
+    }
+
+
+
     public void StartRun()
     {
         Current = State.Run;
