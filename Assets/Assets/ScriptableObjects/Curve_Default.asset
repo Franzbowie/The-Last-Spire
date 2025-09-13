@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b58300a15935e74994b96f481e07a9e, type: 3}
+  m_Name: Curve_Default
+  m_EditorClassIdentifier: Assembly-CSharp::TLS.SO.DifficultyCurve
+  SR0: 0.5
+  c: 0.02
+  a: 0.01
+  b: 1.1
+  d: 0
+  e: 0.01
