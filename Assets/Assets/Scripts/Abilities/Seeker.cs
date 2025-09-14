@@ -14,10 +14,21 @@ namespace TLS.Abilities
         private float _timer;
         private bool _wasRunning;
 
+        private void Start()
+        {
+            TLS.Progression.UpgradeService.ApplySeeker(this);
+        }
+
         private void Update()
         {
             bool running = GameManager.I != null && GameManager.I.Current == GameManager.State.Run;
+            bool unlocked = TLS.Progression.UnlocksService.IsUnlocked(TLS.Progression.UnlocksService.Ability.Seeker);
             if (!running)
+            {
+                _wasRunning = false;
+                return;
+            }
+            if (!unlocked)
             {
                 _wasRunning = false;
                 return;

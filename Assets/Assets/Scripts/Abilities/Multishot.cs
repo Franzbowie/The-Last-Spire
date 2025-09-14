@@ -17,6 +17,11 @@ namespace TLS.Abilities
         private float _timer;
         private bool _wasRunning;
 
+        private void Start()
+        {
+            TLS.Progression.UpgradeService.ApplyMultishot(this);
+        }
+
         private void Update()
         {
             bool running = GameManager.I != null && GameManager.I.Current == GameManager.State.Run;

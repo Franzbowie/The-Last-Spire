@@ -14,6 +14,7 @@ namespace TLS.Abilities
 
         private void Start()
         {
+            TLS.Progression.UpgradeService.ApplyShield(this);
             _cur = capacity;
             _regenAt = Time.time + startupDelay;
         }
@@ -29,6 +30,9 @@ namespace TLS.Abilities
         // Returns leftover damage after absorption
         public int Absorb(int dmg)
         {
+            // Gate by unlock state; if not unlocked, do nothing
+            if (!TLS.Progression.UnlocksService.IsUnlocked(TLS.Progression.UnlocksService.Ability.Shield))
+                return dmg;
             if (_cur <= 0) return dmg;
             int used = Mathf.Min(_cur, dmg);
             _cur -= used;
@@ -50,4 +54,3 @@ namespace TLS.Abilities
 #endif
     }
 }
-

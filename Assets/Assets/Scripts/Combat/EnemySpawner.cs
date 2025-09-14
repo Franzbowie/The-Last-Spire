@@ -15,6 +15,7 @@ namespace TLS.Combat
         private float t;
         private float spawnTimer;
         private static Sprite _fallbackSprite;
+        private bool _runInit;
 
         private void Update()
         {
@@ -22,6 +23,21 @@ namespace TLS.Combat
                 return;
 
             float dt = Time.deltaTime;
+
+            // Apply start-minute offset once at run start
+            if (!_runInit)
+            {
+                _runInit = true;
+                int startMin = TLS.Progression.PassiveService.StartMinute;
+                if (startMin > 0)
+                {
+                    float offset = startMin * 60f;
+                    t += offset;
+                    // ensure first spawn happens promptly after run begins
+                    spawnTimer = 0f;
+                }
+            }
+
             t += dt;
 
             float spawnRate = curve != null ? curve.SR0 * (1f + curve.c * t) : 0.5f;

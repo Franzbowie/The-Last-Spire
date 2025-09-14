@@ -27,10 +27,21 @@ namespace TLS.Abilities
             _lr.positionCount = 2;
         }
 
+        private void Start()
+        {
+            TLS.Progression.UpgradeService.ApplyBeam(this);
+        }
+
         private void Update()
         {
             bool running = GameManager.I != null && GameManager.I.Current == GameManager.State.Run;
+            bool unlocked = TLS.Progression.UnlocksService.IsUnlocked(TLS.Progression.UnlocksService.Ability.Beam);
             if (!running)
+            {
+                _wasRunning = false;
+                return;
+            }
+            if (!unlocked)
             {
                 _wasRunning = false;
                 return;
