@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 namespace TLS.UI
 {
@@ -10,7 +11,11 @@ namespace TLS.UI
         public GameObject passivesTab;
         public GameObject statsTab;
 
-        [Header("Wallet")] public Text coinsText;
+        [Header("Tab Buttons")] public UnityEngine.UI.Button upgradesButton;
+        public UnityEngine.UI.Button passivesButton;
+        public UnityEngine.UI.Button statsButton;
+
+        [Header("Wallet")] public TextMeshProUGUI coinsText;
 
         [Header("SkyStrike Prices")]
         public Text priceSkyDamage;
@@ -53,12 +58,51 @@ namespace TLS.UI
 
         private void SetTabs(bool u, bool p, bool s)
         {
+            // Clear all price texts first to avoid text persistence
+            ClearAllPriceTexts();
+            
+            // Show/hide panels
             if (upgradesTab) upgradesTab.SetActive(u);
             if (passivesTab) passivesTab.SetActive(p);
             if (statsTab) statsTab.SetActive(s);
+            
+            // Show/hide coins text based on active tab
+            // Show coins in Upgrades and Passives tabs, hide in Stats tab
+            bool shouldShowCoins = u || p;
+            if (coinsText != null) coinsText.gameObject.SetActive(shouldShowCoins);
+            
+            // Update button visual states
+            UpdateTabButtonStates(u, p, s);
+            
             RefreshCoins();
             if (u) RefreshUpgradePrices();
             if (p) RefreshPassivePrices();
+            if (s) RefreshStats();
+        }
+
+        private void UpdateTabButtonStates(bool upgradesActive, bool passivesActive, bool statsActive)
+        {
+            // Update button colors to show which tab is active
+            if (upgradesButton != null)
+            {
+                var colors = upgradesButton.colors;
+                colors.normalColor = upgradesActive ? Color.white : Color.gray;
+                upgradesButton.colors = colors;
+            }
+            
+            if (passivesButton != null)
+            {
+                var colors = passivesButton.colors;
+                colors.normalColor = passivesActive ? Color.white : Color.gray;
+                passivesButton.colors = colors;
+            }
+            
+            if (statsButton != null)
+            {
+                var colors = statsButton.colors;
+                colors.normalColor = statsActive ? Color.white : Color.gray;
+                statsButton.colors = colors;
+            }
         }
 
         public void Purchase(int price, string kind)
@@ -71,10 +115,19 @@ namespace TLS.UI
             Debug.Log($"Purchased {kind} for {price}");
         }
 
-        private void RefreshCoins()
+        public void RefreshCoins()
         {
             if (coinsText != null && TLS.Progression.Coins.I != null)
-                coinsText.text = TLS.Progression.Coins.I.total.ToString();
+            {
+                coinsText.text = TLS.Progression.Coins.I.total.ToString() + " Монет";
+            }
+            else
+            {
+                if (coinsText == null)
+                    Debug.LogWarning("DeathShopController: coinsText not assigned in Inspector!");
+                if (TLS.Progression.Coins.I == null)
+                    Debug.LogWarning("DeathShopController: Coins service not found!");
+            }
         }
 
         private void RefreshUpgradePrices()
@@ -96,6 +149,36 @@ namespace TLS.UI
             if (priceMinute) priceMinute.text = TLS.Progression.PassiveService.GetPrice(TLS.Progression.PassiveService.Passive.Minute).ToString();
             if (priceImpatient) priceImpatient.text = TLS.Progression.PassiveService.GetPrice(TLS.Progression.PassiveService.Passive.Impatient).ToString();
             if (priceVeryImpatient) priceVeryImpatient.text = TLS.Progression.PassiveService.GetPrice(TLS.Progression.PassiveService.Passive.VeryImpatient).ToString();
+        }
+
+        private void RefreshStats()
+        {
+            // Find and refresh StatsView component
+            var statsView = statsTab?.GetComponentInChildren<StatsView>();
+            if (statsView != null)
+            {
+                statsView.Refresh();
+            }
+        }
+
+        private void ClearAllPriceTexts()
+        {
+            // Clear upgrade price texts
+            if (priceSkyDamage) priceSkyDamage.text = "";
+            if (priceSkyRadius) priceSkyRadius.text = "";
+            if (priceSkyInterval) priceSkyInterval.text = "";
+            if (priceSkyCount) priceSkyCount.text = "";
+
+            // Clear passive price texts
+            if (priceCoinsPlus) priceCoinsPlus.text = "";
+            if (priceExtra) priceExtra.text = "";
+            if (pricePierce) pricePierce.text = "";
+            if (priceCrit) priceCrit.text = "";
+            if (priceSpikes) priceSpikes.text = "";
+            if (priceTowerHP) priceTowerHP.text = "";
+            if (priceMinute) priceMinute.text = "";
+            if (priceImpatient) priceImpatient.text = "";
+            if (priceVeryImpatient) priceVeryImpatient.text = "";
         }
 
         // Upgrade buttons
@@ -145,14 +228,14 @@ namespace TLS.UI
         // UI buttons
         public void OnClickRestart()
         {
-            TLS.Core.RunStarter.SetAutoStartNextScene();
-            UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex);
-        }
-
-        public void OnClickContinue()
-        {
-            // Go to menu (reload without autostart)
-            UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex);
+            // Hide death shop and start new run immediately
+            gameObject.SetActive(false);
+            
+            // Reset game state and start new run
+            if (TLS.Core.GameManager.I != null)
+            {
+                TLS.Core.GameManager.I.StartRun();
+            }
         }
     }
 }

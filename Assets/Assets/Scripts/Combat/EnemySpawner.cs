@@ -44,10 +44,7 @@ namespace TLS.Combat
             }
             else if (autoCreateFallbackEnemy)
             {
-                if (cfg == null)
-                    Debug.LogWarning("EnemySpawner: EnemyConfig not assigned. Using runtime fallback enemy.");
-                else if (cfg.enemyPrefab == null)
-                    Debug.LogWarning("EnemySpawner: EnemyConfig.enemyPrefab not set. Using runtime fallback enemy.");
+                // Silent fallback - no warning needed since this is expected behavior
                 go = CreateRuntimeEnemy();
                 go.transform.position = RandomEdgePos();
             }
@@ -57,12 +54,21 @@ namespace TLS.Combat
                 return;
             }
 
+            // Additional safety check
+            if (go == null)
+            {
+                Debug.LogError("EnemySpawner: Failed to create enemy GameObject. Skipping spawn.");
+                return;
+            }
+
             var e = go.GetComponent<EnemyController>();
             if (e == null) e = go.AddComponent<EnemyController>();
 
-            float hp0 = cfg.HP0;
-            float s0 = cfg.Speed0;
-            float dmg0 = cfg.DMG0;
+            // Use config values if available, otherwise use defaults
+            float hp0 = cfg != null ? cfg.HP0 : 10f;
+            float s0 = cfg != null ? cfg.Speed0 : 1f;
+            float dmg0 = cfg != null ? cfg.DMG0 : 1f;
+            int coinReward = cfg != null ? cfg.CoinReward : 5;
 
             if (curve != null)
             {
@@ -77,7 +83,7 @@ namespace TLS.Combat
                 e.speed = s0;
             }
 
-            e.coinReward = cfg.CoinReward;
+            e.coinReward = coinReward;
         }
 
         private Vector3 RandomEdgePos()

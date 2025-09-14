@@ -12,6 +12,8 @@ namespace TLS.UI
             if (shop != null)
             {
                 shop.gameObject.SetActive(true);
+                // Force refresh coins when shop opens
+                shop.RefreshCoins();
             }
             else
             {
