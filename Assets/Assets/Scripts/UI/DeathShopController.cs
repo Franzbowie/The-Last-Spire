@@ -4,6 +4,20 @@ using TMPro;
 
 namespace TLS.UI
 {
+    public enum WeaponType
+    {
+        SkyStrike,    // Небесный снаряд
+        Seeker,       // Искатель
+        Multishot,    // Мультивыстрел
+        Swords,       // Мечи
+        Runes,        // Руны
+        AoEEMI,       // ЭМИ
+        Bouncer,      // Вышибала
+        Mortar,       // Мортира
+        Beam,         // Луч
+        Shield        // Щит
+    }
+
     // Minimal controller for DeathShop: tabs + simple purchases using Coins.
     public class DeathShopController : MonoBehaviour
     {
@@ -16,6 +30,24 @@ namespace TLS.UI
         public UnityEngine.UI.Button statsButton;
 
         [Header("Wallet")] public TextMeshProUGUI coinsText;
+
+        [Header("Weapon Selection")]
+        public ScrollRect weaponScrollRect;
+        public Transform weaponButtonContainer;
+        public GameObject weaponButtonPrefab;
+        private WeaponType selectedWeapon = WeaponType.SkyStrike;
+
+        [Header("Upgrade Panels")]
+        public GameObject skyStrikeUpgrades;
+        public GameObject seekerUpgrades;
+        public GameObject multishotUpgrades;
+        public GameObject swordsUpgrades;
+        public GameObject runesUpgrades;
+        public GameObject aoEEMIUpgrades;
+        public GameObject bouncerUpgrades;
+        public GameObject mortarUpgrades;
+        public GameObject beamUpgrades;
+        public GameObject shieldUpgrades;
 
         [Header("SkyStrike Prices")]
         public Text priceSkyDamage;
@@ -38,6 +70,7 @@ namespace TLS.UI
         {
             RefreshCoins();
             ShowUpgrades();
+            InitializeWeaponSelection();
             RefreshUpgradePrices();
         }
 
@@ -179,6 +212,111 @@ namespace TLS.UI
             if (priceMinute) priceMinute.text = "";
             if (priceImpatient) priceImpatient.text = "";
             if (priceVeryImpatient) priceVeryImpatient.text = "";
+        }
+
+        // Weapon selection methods
+        private void InitializeWeaponSelection()
+        {
+            if (weaponButtonContainer == null || weaponButtonPrefab == null) return;
+
+            // Clear existing buttons
+            foreach (Transform child in weaponButtonContainer)
+            {
+                Destroy(child.gameObject);
+            }
+
+            // Create buttons for each weapon type
+            string[] weaponNames = {
+                "Небесный снаряд", "Искатель", "Мультивыстрел", "Мечи", "Руны",
+                "ЭМИ", "Вышибала", "Мортира", "Луч", "Щит"
+            };
+
+            for (int i = 0; i < weaponNames.Length; i++)
+            {
+                WeaponType weaponType = (WeaponType)i;
+                CreateWeaponButton(weaponType, weaponNames[i]);
+            }
+
+            // Select default weapon
+            SelectWeapon(selectedWeapon);
+        }
+
+        private void CreateWeaponButton(WeaponType weaponType, string weaponName)
+        {
+            GameObject buttonObj = Instantiate(weaponButtonPrefab, weaponButtonContainer);
+            Button button = buttonObj.GetComponent<Button>();
+            Text buttonText = buttonObj.GetComponentInChildren<Text>();
+            
+            if (buttonText != null)
+                buttonText.text = weaponName;
+
+            if (button != null)
+            {
+                button.onClick.AddListener(() => SelectWeapon(weaponType));
+            }
+        }
+
+        public void SelectWeapon(WeaponType weaponType)
+        {
+            selectedWeapon = weaponType;
+            ShowWeaponUpgrades(weaponType);
+            RefreshWeaponPrices(weaponType);
+        }
+
+        private void ShowWeaponUpgrades(WeaponType weaponType)
+        {
+            // Hide all upgrade panels
+            if (skyStrikeUpgrades) skyStrikeUpgrades.SetActive(false);
+            if (seekerUpgrades) seekerUpgrades.SetActive(false);
+            if (multishotUpgrades) multishotUpgrades.SetActive(false);
+            if (swordsUpgrades) swordsUpgrades.SetActive(false);
+            if (runesUpgrades) runesUpgrades.SetActive(false);
+            if (aoEEMIUpgrades) aoEEMIUpgrades.SetActive(false);
+            if (bouncerUpgrades) bouncerUpgrades.SetActive(false);
+            if (mortarUpgrades) mortarUpgrades.SetActive(false);
+            if (beamUpgrades) beamUpgrades.SetActive(false);
+            if (shieldUpgrades) shieldUpgrades.SetActive(false);
+
+            // Show selected weapon's upgrade panel
+            GameObject selectedPanel = GetWeaponUpgradePanel(weaponType);
+            if (selectedPanel != null)
+                selectedPanel.SetActive(true);
+        }
+
+        private GameObject GetWeaponUpgradePanel(WeaponType weaponType)
+        {
+            return weaponType switch
+            {
+                WeaponType.SkyStrike => skyStrikeUpgrades,
+                WeaponType.Seeker => seekerUpgrades,
+                WeaponType.Multishot => multishotUpgrades,
+                WeaponType.Swords => swordsUpgrades,
+                WeaponType.Runes => runesUpgrades,
+                WeaponType.AoEEMI => aoEEMIUpgrades,
+                WeaponType.Bouncer => bouncerUpgrades,
+                WeaponType.Mortar => mortarUpgrades,
+                WeaponType.Beam => beamUpgrades,
+                WeaponType.Shield => shieldUpgrades,
+                _ => null
+            };
+        }
+
+        private void RefreshWeaponPrices(WeaponType weaponType)
+        {
+            // Clear all prices first
+            ClearAllPriceTexts();
+
+            // Refresh prices for selected weapon
+            switch (weaponType)
+            {
+                case WeaponType.SkyStrike:
+                    RefreshUpgradePrices();
+                    break;
+                // Add other weapon price refresh methods here as they are implemented
+                default:
+                    // For now, only SkyStrike has implemented upgrades
+                    break;
+            }
         }
 
         // Upgrade buttons

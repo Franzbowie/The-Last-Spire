@@ -1949,7 +1949,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &860520063
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2716,7 +2716,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1541145631
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2736,6 +2736,19 @@ MonoBehaviour:
   passivesButton: {fileID: 650580997}
   statsButton: {fileID: 1596070845}
   coinsText: {fileID: 1568122090}
+  weaponScrollRect: {fileID: 0}
+  weaponButtonContainer: {fileID: 0}
+  weaponButtonPrefab: {fileID: 0}
+  skyStrikeUpgrades: {fileID: 0}
+  seekerUpgrades: {fileID: 0}
+  multishotUpgrades: {fileID: 0}
+  swordsUpgrades: {fileID: 0}
+  runesUpgrades: {fileID: 0}
+  aoEEMIUpgrades: {fileID: 0}
+  bouncerUpgrades: {fileID: 0}
+  mortarUpgrades: {fileID: 0}
+  beamUpgrades: {fileID: 0}
+  shieldUpgrades: {fileID: 0}
   priceSkyDamage: {fileID: 916005985}
   priceSkyRadius: {fileID: 1894053251}
   priceSkyInterval: {fileID: 660577099}
